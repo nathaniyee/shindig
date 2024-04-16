@@ -1,10 +1,12 @@
-import * as React from 'react';
-import { ScrollView, StyleSheet, Button, Text, View, TouchableOpacity, Image } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Animated, PanResponder } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import "react-native-gesture-handler";
 
 import ExploreScreen from './ExploreScreen';
 import ProfileScreen from './ProfileScreen';
@@ -80,22 +82,70 @@ function SearchScreen({ navigation }) {
 
 function LocationDetailsScreen({ route, navigation }) {
   const { location } = route.params;
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  navigation = useNavigation();
+
+  useEffect(() => {
+    // Load favorite status from local storage
+    loadFavoriteStatus();
+  }, []);
+
+  useEffect(() => {
+    // Save favorite status to local storage whenever it changes
+    saveFavoriteStatus();
+  }, [isFavorite]);
+
+  const loadFavoriteStatus = async () => {
+    try {
+      // Load favorite status from local storage
+      const favoriteStatus = await AsyncStorage.getItem('favorite_' + location.id);
+      if (favoriteStatus !== null) {
+        setIsFavorite(JSON.parse(favoriteStatus));
+      }
+    } catch (error) {
+      console.error('Error loading favorite status:', error);
+    }
+  };
+
+  const saveFavoriteStatus = async () => {
+    try {
+      // Save favorite status to local storage
+      await AsyncStorage.setItem('favorite_' + location.id, JSON.stringify(isFavorite));
+    } catch (error) {
+      console.error('Error saving favorite status:', error);
+    }
+  };
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+  };
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: '',
       headerBackTitleVisible: false,
-      headerTitle:'',
+      headerRight: () => (
+        <TouchableOpacity onPress={toggleFavorite} style={{ marginRight: 20 }}>
+          <Ionicons
+            name={isFavorite ? 'star' : 'star-outline'}
+            size={27}
+            color={isFavorite ? '#B973DA' : 'black'}
+          />
+        </TouchableOpacity>
+      ),
     });
-  }, [navigation]);
+  }, [navigation, isFavorite]);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container} backgroundColor='white'>
         <Image style={styles.image} source={location.image}/>
         <Text style={styles.locationTitle}>{location.name}</Text>
         <Text style={styles.locationDescription}> {location.description}</Text>
     </ScrollView>
   );
 }
+
 
 const ExploreStack = createNativeStackNavigator();
 
