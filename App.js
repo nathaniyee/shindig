@@ -7,11 +7,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import "react-native-gesture-handler";
+import { MultipleSelectList } from 'react-native-dropdown-select-list';
+
 
 import ExploreScreen from './ExploreScreen';
 import ProfileScreen from './ProfileScreen';
 
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const myData = [
   { id: 1, name: "Amy's Ice Cream", description: "Amy's Ice Creams is a privately owned chain of ice cream shops in Texas with headquarters in Austin. The Austin Chronicle described Amy's as a \"quintessentially Austin institution\" which \"dominates the local ice cream scene.\" Amy's ice cream is owned by Amy Simmons.", image: require('./images/amyicecream.jpeg')},
