@@ -20,6 +20,8 @@ const myData = [
   { id: 3, name: 'Lady Bird Lake', description: 'Lady Bird Lake is a river-like reservoir on the Colorado River in Austin, Texas, United States. The City of Austin created the reservoir in 1960 as a cooling pond for a new city power plant. The lake, which has a surface area of 416 acres, is now used primarily for recreation and flood control.', image: require('./images/lbl.jpeg') },
   { id: 4, name: 'Pizza Press', description: 'Nostalgic restaurant doling out pizza, beer & more in casual, 1920s-style surroundings.', image: require('./images/pizzapress.jpeg') },
   { id: 5, name: 'UT Campus Walk', description: 'Want to explore the 40 acres? Go on this self-guided tour to learn the history behind some of UT Austin/’s most iconic buildings and features', image: require('./images/utcampus.jpeg')},
+  { id: 6, name: 'Texas Capitol', description: 'The Texas State Capitol is the capitol and seat of government of the American state of Texas. Located in downtown Austin, Texas, the structure houses the offices and chambers of the Texas Legislature and of the Governor of Texas.', image: require('./images/capitol.jpg')},
+  { id: 7, name: 'UT Campus Walk', description: 'Want to explore the 40 acres? Go on this self-guided tour to learn the history behind some of UT Austin’s most iconic buildings and features', image: require('./images/utcampus.jpeg')},
 ]
 
 function SearchScreen({ navigation }) {
@@ -199,7 +201,7 @@ export default function App() {
 
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: 'purple',
+      tabBarActiveTintColor: '#B973DA',
       tabBarInactiveTintColor: 'gray',
       headerShown: false,
       tabBarShowLabel: false,
@@ -217,6 +219,7 @@ const styles = StyleSheet.create({
   searchContainer: {
       paddingTop: 250,
       flexGrow: 1,
+      backgroundColor: "#B973DA",
   },
   searchText: {
     fontSize: 20,
@@ -230,6 +233,7 @@ const styles = StyleSheet.create({
   text: {
       fontSize: 32,
       fontWeight: 'bold',
+      backgroundColor: "#B973DA",
   },
   userBlock: {
     marginBottom: 10,
@@ -245,6 +249,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 5,
+    backgroundColor: "#B973DA",
   },
   imageContainer: {
     width: 50,

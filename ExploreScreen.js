@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet, Dimensions, Image, Animated, PanResponder } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const tagIcons = {
+  outdoor: 'leaf',
+  fitness: 'fitness',
+  money: 'cash-outline',
+  nature: 'flower',
+  food: 'fast-food',
+};
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const tiles = [
-  {id: "1", uri: require('./images/2-3-vertical-turtle-pond-ut-tower.jpg'), name: "UT"},
-  {id: "2", uri: require('./images/6532dc8ea5091c7dc84ea8ad_xnXiCe82SMOl4fjLskM0O9P3xTOVVScZazwxF-OBvPI.png'), name: "Black Swan Yoga"},
-  {id: "3", uri: require('./images/austin-skyline-with-barton-spring-pool-vertical-DR204008.jpg'), name: "Barton Springs"},
+  {id: "1", uri: require('./images/2-3-vertical-turtle-pond-ut-tower.jpg'), name: "UT Campus Walk", compatibility: "99%", rating: 5, tags: ['outdoor']},
+  {id: "2", uri: require('./images/6532dc8ea5091c7dc84ea8ad_xnXiCe82SMOl4fjLskM0O9P3xTOVVScZazwxF-OBvPI.png'), name: "Black Swan Yoga", compatibility: "80%", rating: 3, tags: ['fitness', 'money']},
+  {id: "3", uri: require('./images/austin-skyline-with-barton-spring-pool-vertical-DR204008.jpg'), name: "Barton Springs", compatibility: "90%", rating: 4, tags: ['outdoor', 'nature']},
+  {id: "4", uri: require('./images/amyicecreamtinder.jpeg'), name: "Amy's Ice Cream", compatibility: "95%", rating: 4, tags: ['food','money']},
+  {id: "5", uri: require('./images/blantontinder.jpeg'), name: "Blanton Art Museum", compatibility: "75%", rating: 3, tags: ['money']},
 ]
 
 
@@ -60,7 +71,7 @@ export default function ExploreScreen({ navigation }) {
           toValue: {x: SCREEN_WIDTH + 100, y: gestureState.dy},
         }).start(() => {
           if (currentIndex === tiles.length - 1) {
-            setCurrentIndex(0); // Reset to the first image
+            setCurrentIndex(0);
           } else {
             setCurrentIndex(currentIndex + 1);
           }          
@@ -73,7 +84,7 @@ export default function ExploreScreen({ navigation }) {
           toValue: {x: -SCREEN_WIDTH - 100, y: gestureState.dy},
         }).start(() => {
           if (currentIndex === tiles.length - 1) {
-            setCurrentIndex(0); // Reset to the first image
+            setCurrentIndex(0);
           } else {
             setCurrentIndex(currentIndex + 1);
           }          
@@ -90,6 +101,37 @@ export default function ExploreScreen({ navigation }) {
     },
   });
 
+  const renderStarRating = (rating) => {
+    const starIcons = [];
+    for (let i = 0; i < 5; i++) {
+      if (i < rating) {
+        // Render a filled star icon
+        starIcons.push(<Ionicons key={i} name="star" size={30} color="#B973DA" />);
+      } else {
+        // Render an empty star icon
+        starIcons.push(<Ionicons key={i} name="star-outline" size={30} color="#B973DA" />);
+      }
+    }
+    return starIcons;
+  };
+
+  const renderTags = (tags) => {
+    return tags.map((tag, index) => {
+      if (tagIcons[tag]) {
+        return (
+          <View key={index} style={[styles.tagContainer, { left: 35 + (70) * index }]}>
+            <View style={styles.tagIconContainer}>
+              <Ionicons name={tagIcons[tag]} size={24} color="white" style={styles.tagIcon} />
+            </View>
+          </View>
+        );
+      } else {
+        return null; // Handle unrecognized tags
+      }
+    });
+  };
+  
+
 
   const renderTiles = () => {
     return tiles.map((item, i) => {
@@ -103,13 +145,32 @@ export default function ExploreScreen({ navigation }) {
           key={item.id} 
           style={[rotateAndTranslate,{height:SCREEN_HEIGHT-175, width:SCREEN_WIDTH, top: -75, padding: 10, position:'absolute'}]}>
 
-            <Animated.View style={{opacity: likeOpacity, transform: [{rotate:'-30deg'}], position:'absolute', top: 50, left: 40, zIndex: 1000}}>
-              <Text style={{borderWidth: 1, borderColor: 'green', color:'green', fontSize: 32, fontWeight: '800', padding: 10}}>Yes!</Text>
+            {/*Yes*/}
+            <Animated.View style={{opacity: likeOpacity, transform: [{rotate:'-30deg'}], position:'absolute', top: 150, left: 40, zIndex: 1000}}>
+              <Text style={{borderWidth: 1, borderColor: 'green', color:'green', fontSize: 32, fontWeight: '800', borderRadius: 10, padding: 10}}>Yes!</Text>
+            </Animated.View>
+            {/*No*/}
+            <Animated.View style={{opacity: dislikeOpacity, transform: [{rotate:'30deg'}], position:'absolute', top: 150, right: 40, zIndex: 1000}}>
+              <Text style={{borderWidth: 1, borderColor: 'red', color:'red', fontSize: 32, fontWeight: '800', padding: 10, borderRadius: 10,}}>Nope!</Text>
             </Animated.View>
 
-            <Animated.View style={{opacity: dislikeOpacity, transform: [{rotate:'30deg'}], position:'absolute', top: 50, right: 40, zIndex: 1000}}>
-              <Text style={{borderWidth: 1, borderColor: 'red', color:'red', fontSize: 32, fontWeight: '800', padding: 10}}>Nope!</Text>
-            </Animated.View>
+            <View style={styles.circle}>
+              <Text style={styles.circleText}>{item.compatibility}</Text>
+            </View>
+
+            <View style={styles.nameContainer}>
+            <Text style={styles.nameText}>{item.name}
+             </Text>
+            </View>
+
+            <View style={styles.starRatingContainer}>
+            {renderStarRating(item.rating)}
+            </View>
+
+            <View style={styles.tagContainer}>
+            {renderTags(item.tags)}
+            </View>
+
 
             <Image 
               style={{flex:1, height:null, width:null, resizeMode:'cover', borderRadius:20}}
@@ -123,6 +184,23 @@ export default function ExploreScreen({ navigation }) {
           <Animated.View 
           key={item.id} 
           style={[{opacity: nextCardOpacity, transform:[{scale: nextCardScale}],height:SCREEN_HEIGHT-175, width:SCREEN_WIDTH, top: -75, padding: 10, position:'absolute'}]}>
+            <View style={styles.circle}>
+              <Text style={styles.circleText}>{item.compatibility}</Text>
+            </View>
+
+            <View style={styles.nameContainer}>
+              <Text style={styles.nameText}>{item.name}</Text>
+            </View>
+
+            <View style={styles.starRatingContainer}>
+            {renderStarRating(item.rating)}
+            </View>
+
+            <View style={styles.tagContainer}>
+            {renderTags(item.tags)}
+            </View>
+            
+
             <Image 
               style={{flex:1, height:null, width:null, resizeMode:'cover', borderRadius:20}}
               source={item.uri}
@@ -151,112 +229,58 @@ export default function ExploreScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  cardInner: {
-    padding: 10,
+  circle: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 40, // Adjust this value to move the circle down
+    right: 30, // Adjust this value to move the circle left
+    zIndex: 1000,
   },
-  name: {
-    fontSize: 30,
-    color: 'white',
-    fontWeight: 'bold',
-    marginHorizontal: 10,
-  },
-  card: {
-    width: '95%',
-    height: '70%',
-    borderRadius: 10,
- 
- 
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 5,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 6.68,
- 
- 
-    elevation: 11,
-  },
-  exploreImg: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-    overflow: 'hidden',
- 
- 
-    justifyContent: 'flex-end',
-    padding: 20,
-  },
-  searchContainer: {
-      paddingTop: 250,
-      flexGrow: 1,
-  },
-  searchText: {
+  circleText: {
+    color: '#B973DA',
     fontSize: 20,
     fontWeight: 'bold',
   },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
- },
-  text: {
-      fontSize: 32,
-      fontWeight: 'bold',
+  nameContainer: {
+    position: 'absolute',
+    bottom: 80,
+    left: 20,
+    zIndex: 1000,
   },
-  userBlock: {
-    marginBottom: 10,
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
-  },
-  listItem: {
-    flexDirection: 'row', // Keep flexDirection as row
-    alignItems: 'center',
-    marginHorizontal: 10,
-    marginVertical: 5,
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 5,
-  },
-  imageContainer: {
-    width: 50,
-    height: 50,
-    marginLeft: 'auto', // Move the image to the right using marginLeft: 'auto'
-    borderRadius: 25,
-    overflow: 'hidden',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    margin: 10,
-  },
-  description: {
-    fontSize: 16,
-    margin: 10,
-  },
-  imageList: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-    borderRadius: 25,
-  },
-  image: {
-    width: '90%',
-    height: 300,
-    resizeMode: 'cover',
-  },
-  locationTitle: {
-    marginTop: 10,
+  nameText: {
     fontSize: 36,
     fontWeight: 'bold',
+    color: 'white',
+    padding: 10,
+    borderColor: 'black',
   },
-  locationDescription: {
-    fontSize: 16,
-    marginVertical: 10,
-    paddingHorizontal: 20,
- 
- 
+  starRatingContainer: {
+    position: 'absolute',
+    bottom: 50,
+    left: 40,
+    zIndex: 1000,
+    flexDirection: 'row',
   },
- });
+  tagContainer: {
+    position: 'absolute',
+    bottom: 77, // Adjust vertical position as needed
+    zIndex: 1000,
+  },
+  tagIconContainer: {
+    width: 60,
+    height: 30,
+    borderRadius: 20, // Ensures oval shape
+    backgroundColor: '#B973DA', // Tag background color
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tagIcon: {
+    zIndex: 1001, // Ensure the icon appears above the background
+  },
+});
  
