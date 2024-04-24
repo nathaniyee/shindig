@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet, Dimensions, Image, Animated, PanResponder } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Dimensions, Image, Animated, PanResponder, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -27,6 +27,7 @@ export default function ExploreScreen({ navigation }) {
 
   const [position] = useState(new Animated.ValueXY());
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [flippedIndex, setFlippedIndex] = useState(-1);
   const [rotate] = useState(position.x.interpolate({
     inputRange: [-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
     outputRange: ['-10deg', '0deg', '10deg'],
