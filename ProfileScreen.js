@@ -122,7 +122,7 @@ const MultiSelectButtons = () => {
 
 const styles = StyleSheet.create({
   caption: {
-    textColor: '#5F5F5F',
+    color: '#5F5F5F',
     marginTop: 20,
     fontSize: 10,
   },
