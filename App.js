@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Animated, PanResponder, Dimensions } from 'react-native';
+import { TextInput, FlatList, ScrollView, StyleSheet, Text, View, TouchableOpacity, Image, ImageBackground, Animated, PanResponder, Dimension, Button, Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -21,6 +21,12 @@ const myData = [
   { id: 5, name: 'Pizza Press', description: 'Nostalgic restaurant doling out pizza, beer & more in casual, 1920s-style surroundings.', image: require('./images/pizzapress.jpeg'), rating: 3, distance: '0.4 mi', compatability: 70},
   { id: 6, name: 'Texas Capitol', description: 'The Texas State Capitol is the capitol and seat of government of the American state of Texas. Located in downtown Austin, Texas, the structure houses the offices and chambers of the Texas Legislature and of the Governor of Texas.', image: require('./images/capitol.jpg'), rating: 2, distance : '0.8 mi', compatability: 40},
   { id: 7, name: 'UT Campus Walk', description: 'Want to explore the 40 acres? Go on this self-guided tour to learn the history behind some of UT Austin’s most iconic buildings and features', image: require('./images/2-3-vertical-turtle-pond-ut-tower.jpg'), rating: 5, distance: '0.2 mi', compatability: 99},
+]
+
+const myGroups = [
+  {id: 1, name: 'My Family', members: 4, image: require('./images/family.jpeg')},
+  {id: 2, name: 'My Friend Group', members: 1, image: require('./images/friends.jpeg')},
+  {id: 3, name: 'Convergent Brown Bags', members: 6, image: require('./images/convergent.png')},
 ]
 
 const BOTTOM_SHEET_MAX_HEIGHT = 0.6 * Dimensions.get('window').height;
@@ -111,6 +117,173 @@ function SearchScreen({ navigation }) {
     </ScrollView>
   );
 }
+
+function GroupScreen({ navigation }) {
+  navigation = useNavigation();
+
+  const handleGroupPress = (group) => {
+    navigation.navigate('GroupDetails', { group });
+  }
+
+  const handleCreateGroup = () => {
+    // Navigate to the screen where you can create a new group
+    navigation.navigate('CreateGroup');
+  };
+
+  const [groups, setGroups] = React.useState(myGroups);
+  const [originalGroups, setOriginalGroups] = React.useState(myGroups);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerLargeTitle: true,
+      headerSearchBarOptions: {
+        placeHolder: 'Search for groups',
+        color: '#B973DA',
+        onChangeText: (event) => {
+          handleFilter(event.nativeEvent.text);
+        },
+        onCancel: () => {
+          handleCancel();
+        },
+      },
+      headerRight: () => (
+        <TouchableOpacity onPress={handleCreateGroup} style={{ marginRight: 20 }}>
+          <Ionicons name="add" size={27} color="#B973DA" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  function handleFilter(searchTerm) {
+    if (searchTerm.trim() === '') {
+      setGroups(originalGroups);
+      setOriginalGroups(originalGroups);
+    }
+    else {
+      const filteredGroups = originalGroups.filter((group) =>
+        group.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setGroups(filteredGroups);
+    }
+  }
+
+  function handleCancel() {
+    setGroups(originalGroups);
+  }
+
+  const renderMemberIcons = (count) => {
+    const icons = [];
+    for (let i = 0; i < count; i++) {
+      icons.push(<Ionicons key={i} name="person" size={24} color="#000000" />);
+    }
+    return icons;
+  };
+
+  return (
+    <ScrollView contentContainerStyle={styles.searchContainer}>
+      <View>
+        {myGroups.map((group, idx) => (
+          <TouchableOpacity style={styles.listItem} key={idx} onPress={() => handleGroupPress(group)}>
+            <View style={styles.infoContainer}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.searchText}>{group.name}</Text>
+                <View style={styles.ratingDistanceContainerInSearch}>
+                  {renderMemberIcons(group.members)}
+                </View>
+              </View>
+            </View>
+            <View style={styles.imageContainer}>
+              <Image style={styles.imageList} source={group.image} />
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+
+function CreateGroup({ navigation }) {
+  const [groupName, setGroupName] = useState('');
+  const [groupCode, setGroupCode] = useState('');
+
+  const handleCreateGroup = () => {
+    // Implement logic to create a group
+    console.log('Creating group with name:', groupName);
+  };
+
+  const handleJoinGroup = () => {
+    // Implement logic to join a group
+    console.log('Joining group with code:', groupCode);
+  };
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter group name"
+          value={groupName}
+          onChangeText={setGroupName}
+        />
+        <Button title="Create" onPress={handleCreateGroup} />
+      </View>
+      <Text>OR</Text>
+      <View style={styles.section}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter group code"
+          value={groupCode}
+          onChangeText={setGroupCode}
+        />
+        <Button title="Join" onPress={handleJoinGroup} />
+      </View>
+    </View>
+  );
+}
+
+function GroupDetailsScreen({ route, navigation }) {
+  const { group } = route.params;
+
+  const renderMembers = (count) => {
+    const icons = [];
+    for (let i = 0; i < count; i++) {
+      icons.push(<Ionicons key={i} name="person" size={24} color="purple" />);
+    }
+    return icons;
+  };
+
+  const events = [
+    { id: 1, name: 'Barton Springs', },
+    { id: 2, name: 'Franklin Barbecue', },
+    { id: 3, name: 'Amy\'s Ice Cream', },
+    { id: 4, name: 'Pizza Press', },
+    { id: 5, name: 'UT Campus Walk', },
+  ];
+
+  const renderEventItem = ({ item, index }) => (
+    <View style={styles.eventItem}>
+      <Text style={styles.eventName}>{index+1}. {item.name}</Text>
+    </View>
+  );
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center' }}>
+      <Image source={group.image} style={{ top: 50, width: 225, height: 225, borderRadius: 150 }} />
+      <Text style={{ top: 30, fontSize: 42, fontWeight: 'bold', marginTop: 10, padding: 20}}>{group.name}</Text>
+      <View style={{ top: 30, flexDirection: 'row', alignItems: 'center', marginTop: 10, }}>
+        {renderMembers(group.members)}
+      </View>
+      <Text style={styles.sectionTitle}>RESULTS</Text>
+      <FlatList
+        data={events}
+        renderItem={renderEventItem}
+        keyExtractor={(item) => item.id.toString()}
+        style={styles.eventList}
+      />
+    </View>
+  );
+}
+
 
 function LocationDetailsScreen({ route, navigation }) {
   const { location } = route.params;
@@ -299,8 +472,11 @@ const ProfileStack = createNativeStackNavigator();
 
 function ProfileStackScreen() {
   return (
-    <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-      <ProfileStack.Screen name="Profile" component={ProfileScreen} />
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }}/>
+      <ProfileStack.Screen name="My Groups" component={GroupScreen} options={{headerShown: true}} />
+      <ProfileStack.Screen name='GroupDetails' component={GroupDetailsScreen} options={{headerTitle: '', headerBackTitleVisible: false}}/>
+      <ProfileStack.Screen name='CreateGroup' component={CreateGroup} options={{headerTitle: '', headerBackTitleVisible: false}}/>
     </ProfileStack.Navigator>
   );
 
@@ -320,7 +496,7 @@ export default function App() {
         } else if (route.name === 'SearchTab') {
           iconName = focused ? 'search' : 'search-outline';
         } else if (route.name === 'ProfileTab') {
-          iconName = focused ? 'person' : 'person-outline';
+          iconName = focused ? 'person-circle-outline' : 'person-circle-outline';
         }
 
         return <Ionicons name={iconName} size={size} color={color} />;
@@ -464,5 +640,27 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
+  eventItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  eventName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    padding: 5,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    top: 60, 
+    left: 20,
+  },
+  eventList: {
+    top: 60,
+    width: '100%',
+  },
 });

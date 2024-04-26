@@ -4,7 +4,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // Adjust the import b
 import { Slider } from 'react-native-elements/dist/slider/Slider';
 import SwitchSelector from "react-native-switch-selector"
 import { Livvic_100Thin } from '@expo-google-fonts/livvic';
-
+import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const MultiSelectButtons = () => {
   const [selectedButtons, setSelectedButtons] = useState([]);
@@ -24,10 +25,18 @@ const MultiSelectButtons = () => {
       }
     });
   };
-  
+
+  const navigation = useNavigation();
+
+  const navigateToGroupsScreen = () => {
+    navigation.navigate('My Groups');
+  };
 
   return (   
     <View style={styles.container}>
+      <TouchableOpacity style={styles.buttonContainer} onPress={navigateToGroupsScreen}>
+        <Ionicons name="people" size={30} color="#B973DA" />
+      </TouchableOpacity>
       <View style = {styles.profileContainer}>
         <View style = {styles.circle}>
           <Image style = {styles.img} source={require('./images/user.png')}/>
@@ -214,7 +223,12 @@ const styles = StyleSheet.create({
     height: 15,
     borderRadius: 7.5,
     backgroundColor: '#C9A0DC', // Customize the color as needed
-  },  
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: 60,
+    right: 25,
+  },
 });
 
 export default MultiSelectButtons;
