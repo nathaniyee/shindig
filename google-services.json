@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1032535321404",
+    "project_id": "shindig-9fda2",
+    "storage_bucket": "shindig-9fda2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032535321404:android:6bf096d20dee91f4bb8c39",
+        "android_client_info": {
+          "package_name": "com.convergent.shindig"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkZjLuBZIGpPFpdMqVuvMbCDdGqD9uIMY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
