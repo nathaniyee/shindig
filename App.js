@@ -7,6 +7,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import "react-native-gesture-handler";
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth'; 
 
 
 import ExploreScreen from './ExploreScreen';
